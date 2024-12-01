@@ -1,10 +1,21 @@
 [project]
 name = "divide-and-conquer-sentiment"
 version = "0.1.0"
-description = "Add your description here"
+description = "Improved Sentiment Classification by Constituent Conflict Resolution"
+authors = [
+    {name = "Jan Kościałkowski", email = "jan.koscialkowski@gmail.com"},
+    {name = "Paweł Marcinkowski", email = "marcinkowski.paw@gmail.com"}
+]
 readme = "README.md"
-requires-python = ">=3.12"
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
 dependencies = [
+    "datasets",
+    "kaggle",
     "torch",
-    "pydantic"
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest"
 ]
