@@ -5,16 +5,20 @@ description = "Improved Sentiment Classification by Constituent Conflict Resolut
 authors = [
     {name = "Jan Kościałkowski", email = "jan.koscialkowski@gmail.com"},
     {name = "Paweł Marcinkowski", email = "marcinkowski.paw@gmail.com"}
-]
+    ]
 readme = "README.md"
 license = {file = "LICENSE"}
-requires-python = ">=3.10"
+requires-python = "==3.10.12"
 dependencies = [
     "datasets",
     "kaggle",
     "torch",
+    "torch",
+    "pydantic",
+    "spacy",
+    "pysbd",
+    "claucy @ git+https://github.com/mmxgn/spacy-clausie.git"
 ]
-
 [project.optional-dependencies]
 dev = [
     "pre-commit",
