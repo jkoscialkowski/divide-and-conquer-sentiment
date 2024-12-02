@@ -16,6 +16,17 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-tests = [
-    "pytest"
+dev = [
+    "pre-commit",
+    "pytest",
+    "ruff"
 ]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "I"
+]
+extend-select = ["E501"]

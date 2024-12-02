@@ -16,4 +16,3 @@ uv pip install .
 ## Notebooks
 
 ## Paper
-
