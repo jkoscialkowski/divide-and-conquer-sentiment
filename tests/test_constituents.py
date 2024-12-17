@@ -1,4 +1,4 @@
-from divide_and_conquer_sentiment.constituents import ABSASubpredictor
+from divide_and_conquer_sentiment.subprediction.absa import ABSASubpredictor
 
 
 def test_dupa():

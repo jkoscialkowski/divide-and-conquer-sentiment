@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 
+from divide_and_conquer_sentiment.subprediction.absa import SubpredictorBase
+
 from .aggregation.base import AggregatorBase
-from .constituents import SubpredictorBase
 
 
 @dataclass
-class DACModel:
+class DACSModel:
     subpredictor: SubpredictorBase
     aggregator: AggregatorBase
 

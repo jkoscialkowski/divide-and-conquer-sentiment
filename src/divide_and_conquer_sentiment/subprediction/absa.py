@@ -1,13 +1,7 @@
-from abc import ABC, abstractmethod
-
 import torch
 from setfit import AbsaModel
 
-
-class SubpredictorBase(ABC):
-    @abstractmethod
-    def predict(self, inputs: list[str]) -> list[torch.Tensor]:
-        pass
+from .base import SubpredictorBase
 
 
 class ABSASubpredictor(SubpredictorBase):
