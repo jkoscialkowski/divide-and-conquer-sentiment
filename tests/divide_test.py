@@ -1,5 +1,5 @@
 import unittest
-from src.divide import Divide  # Assuming your Divide class is saved in `divide.py`
+from src.divide_and_conquer_sentiment.divide import Divide  # Assuming your Divide class is saved in `divide.py`
 
 class TestDivide(unittest.TestCase):
     def setUp(self):
