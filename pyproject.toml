@@ -12,6 +12,9 @@ requires-python = ">=3.10"
 dependencies = [
     "datasets",
     "kaggle",
+    "lightning",
+    "setfit",
+    "spacy",
     "torch",
 ]
 
