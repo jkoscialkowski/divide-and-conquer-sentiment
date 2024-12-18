@@ -13,7 +13,7 @@ dependencies = [
     "datasets",
     "kaggle",
     "torch",
-    "torch",
+    "transformers",
     "pydantic",
     "spacy",
     "pysbd",

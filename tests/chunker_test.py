@@ -1,12 +1,12 @@
 import unittest
-from src.divide_and_conquer_sentiment.divide import Divide  # Assuming your Divide class is saved in `divide.py`
+from src.divide_and_conquer_sentiment.subprediction.sentence import Chunker  # Assuming your Divide class is saved in `sentence.py`
 
 class TestDivide(unittest.TestCase):
     def setUp(self):
         """
         Set up a Divide instance for testing.
         """
-        self.divide = Divide()
+        self.divide = Chunker()
 
     def test_identity(self):
         """
@@ -14,7 +14,7 @@ class TestDivide(unittest.TestCase):
         """
         text = "This is the only sentence."
         expected = ["This is the only sentence."]
-        result = self.divide.segment_text(text)
+        result = self.divide.chunk_text(text)
         self.assertEqual(result, expected)
 
     def test_segment_text(self):
@@ -23,7 +23,7 @@ class TestDivide(unittest.TestCase):
         """
         text = "This is the first sentence. Here's the second one!"
         expected = ["This is the first sentence. ", "Here's the second one!"]
-        result = self.divide.segment_text(text)
+        result = self.divide.chunk_text(text)
         self.assertEqual(result, expected)
 
     def test_3_setnceces(self):
@@ -32,7 +32,7 @@ class TestDivide(unittest.TestCase):
         """
         text = "This is the first sentence. Here's the second one! And here's the third one!"
         expected = ["This is the first sentence. ", "Here's the second one! ", "And here's the third one!"]
-        result = self.divide.segment_text(text)
+        result = self.divide.chunk_text(text)
         self.assertEqual(result, expected)
 
     def test_extract_clauses_simple(self):
@@ -69,11 +69,19 @@ class TestDivide(unittest.TestCase):
         Test that the function handles in clause extraction gracefully.
         """
         text = "This is a test sentence with invalid clauses."
-        # Mock or simulate an AttributeError if needed in the `divide.py` code
+        # Mock or simulate an AttributeError if needed in the `sentence.py` code
         # Here we assume it proceeds without crashing and returns the sentence
         expected = ["This is a test sentence"]
         result = self.divide.extract_clauses(text)
         self.assertEqual(result, expected)
+
+    def test_extract_sentences_list(self):
+        text_list = ['This is the first sentence. This is second of first.','This is the second sentence.']
+        result = self.divide.chunk_list(text_list)
+        expected1 = ['This is the first sentence. ','This is second of first.']
+        expected2 = ['This is the second sentence.']
+        self.assertEqual(result[0], expected1)
+        self.assertEqual(result[1], expected2)
 
 if __name__ == '__main__':
     unittest.main()
