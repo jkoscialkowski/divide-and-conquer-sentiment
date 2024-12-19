@@ -15,6 +15,8 @@ pip3 install uv
 uv pip install .
 ```
 
+To run tests, simply run `pytest`.
+
 ## Notebooks
 
 ## Paper

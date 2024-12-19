@@ -4,7 +4,22 @@ import spacy
 import torch
 from transformers import Pipeline
 
-from src.divide_and_conquer_sentiment.subprediction.base import SubpredictorBase
+from .base import SubpredictorBase
+
+
+class ChunkSubpredictor(SubpredictorBase):
+    def __init__(self, chunker: "Chunker", sentiment_model: Pipeline):
+        self.chunker = chunker
+        self.sentiment_model = sentiment_model
+
+    def predict(self, inputs: list[str]):
+        chunked_sentences = self.chunker.chunk_list(inputs)
+        res = []
+        for chunked_text in chunked_sentences:
+            x = [[x[0]["score"], x[1]["score"], x[2]["score"]] for x in self.sentiment_model(chunked_text)]
+            x = torch.tensor(x)
+            res.append(x)
+        return res
 
 
 class Chunker:
@@ -62,18 +77,3 @@ class Chunker:
                         print("AttributeError during conversion to propositions:", sub)
                 clauses.extend(subsentences)
         return clauses
-
-
-class ChunkSubpredictor(SubpredictorBase):
-    def __init__(self, chunker: Chunker, sentiment_model: Pipeline):
-        self.chunker = chunker
-        self.sentiment_model = sentiment_model
-
-    def predict(self, inputs: list[str]):
-        chunked_sentences = self.chunker.chunk_list(inputs)
-        res = []
-        for chunked_text in chunked_sentences:
-            x = [[x[0]["score"], x[1]["score"], x[2]["score"]] for x in self.sentiment_model(chunked_text)]
-            x = torch.tensor(x)
-            res.append(x)
-        return res

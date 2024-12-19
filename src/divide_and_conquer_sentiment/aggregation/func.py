@@ -1,4 +1,4 @@
-from base import AggregatorBase
+from .base import AggregatorBase
 
 
 class FuncAggregator(AggregatorBase):

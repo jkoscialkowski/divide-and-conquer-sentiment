@@ -1,5 +1,7 @@
 import unittest
-from src.divide_and_conquer_sentiment.subprediction.sentence import Chunker  # Assuming your Divide class is saved in `sentence.py`
+
+from divide_and_conquer_sentiment.subprediction.sentence import Chunker
+
 
 class TestDivide(unittest.TestCase):
     def setUp(self):
@@ -76,13 +78,13 @@ class TestDivide(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_extract_sentences_list(self):
-        text_list = ['This is the first sentence. This is second of first.','This is the second sentence.']
+        text_list = ["This is the first sentence. This is second of first.", "This is the second sentence."]
         result = self.divide.chunk_list(text_list)
-        expected1 = ['This is the first sentence. ','This is second of first.']
-        expected2 = ['This is the second sentence.']
+        expected1 = ["This is the first sentence. ", "This is second of first."]
+        expected2 = ["This is the second sentence."]
         self.assertEqual(result[0], expected1)
         self.assertEqual(result[1], expected2)
 
-if __name__ == '__main__':
-    unittest.main()
 
+if __name__ == "__main__":
+    unittest.main()

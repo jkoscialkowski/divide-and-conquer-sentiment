@@ -10,17 +10,17 @@ readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = "==3.10.12"
 dependencies = [
+    "claucy @ git+https://github.com/mmxgn/spacy-clausie.git",
     "datasets",
     "kaggle",
     "lightning",
+    "pysbd",
     "setfit",
     "spacy",
     "torch",
     "transformers",
     "pydantic",
     "spacy",
-    "pysbd",
-    "claucy @ git+https://github.com/mmxgn/spacy-clausie.git"
 ]
 [project.optional-dependencies]
 dev = [
