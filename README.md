@@ -13,6 +13,7 @@ python3 -m venv venv
 ./venv/bin/activate
 pip3 install uv
 uv pip install .
+pre-commit install
 ```
 
 To run tests, simply run `pytest`.

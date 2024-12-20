@@ -2,24 +2,25 @@ import claucy
 import pysbd
 import spacy
 import torch
-from transformers import Pipeline
+from transformers import TextClassificationPipeline
 
 from .base import SubpredictorBase
 
 
 class ChunkSubpredictor(SubpredictorBase):
-    def __init__(self, chunker: "Chunker", sentiment_model: Pipeline):
+    def __init__(self, chunker: "Chunker", sentiment_model: TextClassificationPipeline):
+        if sentiment_model._postprocess_params["top_k"] is not None:
+            raise ValueError("The sentiment model must return all scores.")
+
         self.chunker = chunker
         self.sentiment_model = sentiment_model
 
-    def predict(self, inputs: list[str]):
+    def predict(self, inputs: list[str]) -> list[torch.Tensor]:
         chunked_sentences = self.chunker.chunk_list(inputs)
-        res = []
-        for chunked_text in chunked_sentences:
-            x = [[x[0]["score"], x[1]["score"], x[2]["score"]] for x in self.sentiment_model(chunked_text)]
-            x = torch.tensor(x)
-            res.append(x)
-        return res
+        return list(map(self._chunk_to_tensor, chunked_sentences))
+
+    def _chunk_to_tensor(self, chunk: list[str]) -> torch.Tensor:
+        return torch.tensor([[pred["score"] for pred in chunk_preds] for chunk_preds in self.sentiment_model(chunk)])
 
 
 class Chunker:
