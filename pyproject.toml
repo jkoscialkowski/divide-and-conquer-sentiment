@@ -23,6 +23,10 @@ dependencies = [
     "spacy",
 ]
 [project.optional-dependencies]
+notebooks = [
+    "jupyter",
+    "jupyterlab"
+]
 dev = [
     "pre-commit",
     "pytest",

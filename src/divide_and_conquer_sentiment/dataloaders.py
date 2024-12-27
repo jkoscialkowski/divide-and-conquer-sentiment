@@ -48,9 +48,13 @@ def _sanitize_dataset(dataset: Dataset, colname_mapping: dict[str, str]) -> Data
     elif unique_label_values == {1, 2, 3, 4, 5}:
         label_mapping = {1: 0, 2: 0, 3: 1, 4: 2, 5: 2}  # type: ignore
 
-    return ds.map(lambda x: {"label": label_mapping[x["label"]]}).cast_column(
-        "label", ClassLabel(names=["negative", "neutral", "positive"])
+    result = (
+        ds.map(lambda x: {"text": x["text"] or ""})
+        .map(lambda x: {"label": label_mapping[x["label"]]})
+        .cast_column("label", ClassLabel(names=["negative", "neutral", "positive"]))
     )
+
+    return result
 
 
 def _train_val_test_split(dataset: Dataset, val_test_perc: tuple[float, float], seed: int | None) -> DatasetDict:
