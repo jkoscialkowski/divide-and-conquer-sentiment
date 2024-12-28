@@ -35,7 +35,7 @@ class MLPAggregator(AggregatorBase):
             train_dataset.with_format("torch"), batch_size=256, shuffle=True, collate_fn=self.collate_fn
         )
         val_loader = DataLoader(val_dataset.with_format("torch"), batch_size=256, collate_fn=self.collate_fn)
-        self.trainer.fit(self.model, train_loader, val_loader)
+        self.trainer.fit(model=self.model, train_dataloaders=train_loader, val_dataloaders=val_loader)
 
     @staticmethod
     def collate_fn(x):
@@ -61,11 +61,20 @@ class MLP(L.LightningModule):
             x = torch.relu(layer(x))
         return self.layers[-1](x)
 
-    def training_step(self, batch: tuple[torch.Tensor, torch.Tensor], batch_idx: int) -> torch.Tensor:
+    def training_step(self, batch: tuple[list[torch.Tensor], torch.Tensor], batch_idx: int) -> torch.Tensor:
         x, y = batch
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
+        self.log("train_loss", loss, prog_bar=True, batch_size=len(x))
         return loss
+
+    def validation_step(self, batch: tuple[list[torch.Tensor], torch.Tensor], batch_idx: int):
+        x, y = batch
+        y_hat = self(x)
+        val_loss = F.cross_entropy(y_hat, y)
+        val_accuracy = (y == torch.argmax(y_hat, dim=1)).float().mean()
+        self.log("val_loss", val_loss, prog_bar=True, batch_size=len(x))
+        self.log("val_accuracy", val_accuracy, prog_bar=True, batch_size=len(x))
 
     def configure_optimizers(self) -> OptimizerLRScheduler:
         optimizer = optim.Adam(self.parameters(), lr=self.lr)
@@ -77,7 +86,7 @@ class MLP(L.LightningModule):
                 pred_array.mean(dim=0),
                 pred_array.min(dim=0).values,
                 pred_array.max(dim=0).values,
-                pred_array.std(dim=0),
+                pred_array.std(dim=0, correction=0),
                 torch.bincount(torch.argmax(pred_array, dim=1), minlength=self.input_size),
                 torch.tensor(pred_array.shape[0], device=pred_array.device),
             ]
