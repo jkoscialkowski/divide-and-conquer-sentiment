@@ -1,7 +1,9 @@
+from dataclasses import dataclass
 from .base import AggregatorBase
 import torch
 from transformers import TextClassificationPipeline
 
+@dataclass()
 class SawonAggregator(AggregatorBase):
 
     def __init__(self, passages: list[str], sentiment_model: TextClassificationPipeline, treshold: float = 0.9):
