@@ -3,7 +3,7 @@ from unittest import mock
 import pytest
 import torch
 from transformers import pipeline
-from src.divide_and_conquer_sentiment.aggregation.sawon import SawonAggregator
+from divide_and_conquer_sentiment.aggregation.sawon import SawonAggregator
 
 # Helper function to assert lists of tensors
 def assert_tensor_lists_equal(list1, list2):
