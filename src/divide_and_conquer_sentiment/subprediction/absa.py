@@ -27,10 +27,11 @@ class ABSASubpredictor(SubpredictorBase):
 
         preds_with_empty = [[next(iter_preds) for _ in aspects] for aspects in aspects_list]
         preds = []
+        dtype = torch.get_default_dtype()
         for input, pred in zip(inputs, preds_with_empty):
             if len(pred) == 0:
-                preds.append(self.absa_model.polarity_model.predict_proba(input).reshape(1, -1))
+                preds.append(self.absa_model.polarity_model.predict_proba(input).reshape(1, -1).to(dtype))
             else:
-                preds.append(torch.vstack(pred))
+                preds.append(torch.vstack(pred).to(dtype))
 
         return preds

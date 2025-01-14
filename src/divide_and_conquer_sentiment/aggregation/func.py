@@ -13,5 +13,5 @@ class FuncAggregator(AggregatorBase):
         """
         self.agg_func = agg_func
 
-    def aggregate(self, subpredictions: list[torch.Tensor]) -> list[torch.Tensor]:
+    def aggregate(self, subpredictions: list[torch.Tensor], **kwargs) -> list[torch.Tensor]:
         return list(map(self.agg_func, subpredictions))
