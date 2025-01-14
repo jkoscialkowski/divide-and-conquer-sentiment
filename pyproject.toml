@@ -42,3 +42,4 @@ select = [
     "E", "F", "I"
 ]
 extend-select = ["E501"]
+ignore = ["E731"]

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import lightning as L
 import torch
 from datasets import Dataset
+from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 from torch import nn, optim
 from torch.nn import functional as F
@@ -18,9 +19,9 @@ class MLPAggregator(AggregatorBase):
 
     def __init__(self, mlp: "MLP"):
         self.model = mlp
-        self.trainer = L.Trainer()
+        self.trainer = L.Trainer(callbacks=[EarlyStopping(monitor="val_loss", patience=3, mode="min")])
 
-    def aggregate(self, subpredictions: list[torch.Tensor]) -> list[torch.Tensor]:
+    def aggregate(self, subpredictions: list[torch.Tensor], **kwargs) -> torch.Tensor:
         # TODO: Check if the model has been trained
         return self.model.predict(subpredictions)
 
@@ -52,8 +53,12 @@ class MLP(L.LightningModule):
         self.layers = nn.ModuleList([nn.Linear(inp, out) for inp, out in zip(sizes[:-1], sizes[1:])])
         self.lr = lr
 
-    def predict(self, subpredictions: list[torch.Tensor]) -> list[torch.Tensor]:
-        return [F.sigmoid(self(subpred)) for subpred in subpredictions]
+    def predict_proba(self, subpredictions: list[torch.Tensor]) -> torch.Tensor:
+        with torch.no_grad():
+            return F.softmax(self(subpredictions), dim=1)
+
+    def predict(self, subpredictions: list[torch.Tensor]) -> torch.Tensor:
+        return torch.argmax(self.predict_proba(subpredictions), dim=1)
 
     def forward(self, subpredictions: list[torch.Tensor]) -> torch.Tensor:
         x = torch.vstack(list(map(self._feature_func, subpredictions)))
