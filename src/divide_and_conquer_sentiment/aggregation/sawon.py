@@ -1,19 +1,19 @@
 from dataclasses import dataclass
 from .base import AggregatorBase
 import torch
-from transformers import TextClassificationPipeline
+from divide_and_conquer_sentiment import SentimentModel
 
 @dataclass()
 class SawonAggregator(AggregatorBase):
 
-    def __init__(self, sentiment_model: TextClassificationPipeline, treshold: float = 0.9):
+    def __init__(self, sentiment_model: SentimentModel, treshold: float = 0.9):
 
         self.sentiment_model = sentiment_model
         self.treshold = treshold
 
     def aggregate(self, subpredictions: list[torch.Tensor] , **kwargs) -> list[torch.Tensor]:
         passages = kwargs['passages']
-        defaults =  self.sentiment_model(passages)
+        defaults =  self.sentiment_model.predict(passages)
         result = []
         for i in range(len(subpredictions)):
             scores_array = subpredictions[i]

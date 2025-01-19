@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 import torch
-from transformers import pipeline
+from divide_and_conquer_sentiment import SentimentModel
 from divide_and_conquer_sentiment.aggregation.sawon import SawonAggregator
 
 # Helper function to assert lists of tensors
@@ -13,9 +13,9 @@ def assert_tensor_lists_equal(list1, list2):
 
 @pytest.fixture
 def mocks(mocker):
-    mock_pipeline = mocker.Mock(spec=pipeline)
-    mock_pipeline.return_value = [torch.zeros(3), torch.zeros(3), torch.zeros(3)]
-    sawon = SawonAggregator(mock_pipeline)
+    mock_model = mocker.Mock(spec=SentimentModel)
+    mock_model.predict.return_value = [torch.zeros(3), torch.zeros(3), torch.zeros(3)]
+    sawon = SawonAggregator(mock_model)
 
     return sawon
 
