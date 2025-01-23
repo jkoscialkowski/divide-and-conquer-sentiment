@@ -25,7 +25,7 @@ class SawonAggregator(AggregatorBase):
         if scores_array.dim() == 1:
             return default
         mask = scores_array[:, 1] <= self.treshold
-        if max(mask) == False:
+        if not any(mask):
             return default
         scores_masked = scores_array[mask]
         return torch.mean(scores_masked, dim=0)
