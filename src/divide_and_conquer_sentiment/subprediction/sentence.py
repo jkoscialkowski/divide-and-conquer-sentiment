@@ -5,12 +5,13 @@ import torch
 from transformers import TextClassificationPipeline
 
 from .base import SubpredictorBase
+from .. import SentimentModel
 
 
 class ChunkSubpredictor(SubpredictorBase):
-    def __init__(self, chunker: "Chunker", sentiment_model: TextClassificationPipeline):
-        if sentiment_model._postprocess_params["top_k"] is not None:
-            raise ValueError("The sentiment model must return all scores.")
+    def __init__(self, chunker: "Chunker", sentiment_model: SentimentModel):
+        # if sentiment_model._postprocess_params["top_k"] is not None:
+        #     raise ValueError("The sentiment model must return all scores.")
 
         self.chunker = chunker
         self.sentiment_model = sentiment_model
@@ -20,7 +21,8 @@ class ChunkSubpredictor(SubpredictorBase):
         return list(map(self._chunk_to_tensor, chunked_sentences))
 
     def _chunk_to_tensor(self, chunk: list[str]) -> torch.Tensor:
-        return torch.tensor([[pred["score"] for pred in chunk_preds] for chunk_preds in self.sentiment_model(chunk)])
+        res = torch.stack(self.sentiment_model.predict(chunk)).squeeze(1)
+        return res
 
 
 class Chunker:
@@ -42,6 +44,10 @@ class Chunker:
         :param text: Input text.
         :return: List of sentences.
         """
+        res = self.segmenter.segment(text)
+        if len(res) == 0:
+            print(f'WARNING, For text: {text}, splitting into sentences failed. Returned list with 1 empty string' )
+            return [""]
         return self.segmenter.segment(text)
 
     def chunk_list(self, texts):

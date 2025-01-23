@@ -10,9 +10,11 @@ class DACSModel:
     subpredictor: SubpredictorBase
     aggregator: AggregatorBase
 
-    def __init__(self, subpredictor: SubpredictorBase, aggregator: AggregatorBase):
+    def __init__(self, subpredictor: SubpredictorBase, aggregator: AggregatorBase, ):
         self.subpredictor = subpredictor
         self.aggregator = aggregator
 
-    def predict(self, inputs: list[str]):
-        return self.aggregator.aggregate(self.subpredictor.predict(inputs))
+    def predict(self, inputs: list[str], **kwargs):
+        return self.aggregator.aggregate(self.subpredictor.predict(inputs), **kwargs)
+
+
