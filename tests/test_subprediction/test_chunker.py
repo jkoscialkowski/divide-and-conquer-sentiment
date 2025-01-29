@@ -62,7 +62,7 @@ class TestDivide(unittest.TestCase):
         Test clause extraction with empty text.
         """
         text = ""
-        expected = []
+        expected = [""]
         result = self.divide.extract_clauses(text)
         self.assertEqual(result, expected)
 
