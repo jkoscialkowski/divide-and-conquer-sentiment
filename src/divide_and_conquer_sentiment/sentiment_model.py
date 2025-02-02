@@ -19,5 +19,5 @@ class PolaritySentimentModel(SentimentModel):
         except ValueError:
             print(f'Prediction failed for subsentences {subsentences}, len = {len(subsentences)}')
             raise ValueError
-        tensor_list = [torch_matrix[i][0:3].unsqueeze(0) for i in range(torch_matrix.size(0))]
+        tensor_list = [torch_matrix[i][1:4].unsqueeze(0) for i in range(torch_matrix.size(0))]
         return tensor_list

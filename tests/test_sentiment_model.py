@@ -4,7 +4,7 @@ import torch
 from setfit.span.modeling import PolarityModel
 
 from divide_and_conquer_sentiment import PolaritySentimentModel
-import test_utils as utils
+import tests.test_utils as utils
 
 @pytest.fixture
 def mocks(mocker):
@@ -15,9 +15,9 @@ def mocks(mocker):
 
 @pytest.mark.parametrize(
     "inputs, expected",
-    [(torch.tensor([[0.0069, 0.0068, 0.0235, 0.9628]]), [torch.tensor([[0.0069, 0.0068, 0.0235]])])
+    [(torch.tensor([[0.0069, 0.0068, 0.0235, 0.9628]]), [torch.tensor([[.0068, 0.0235, 0.9628]])])
      ,(torch.tensor([[0.0069, 0.0068, 0.0235, 0.9628],
-        [0.0651, 0.6133, 0.2772, 0.0444]]),[torch.tensor([[0.0069, 0.0068, 0.0235]]), torch.tensor([[0.0651, 0.6133, 0.2772]])] )
+        [0.0651, 0.6133, 0.2772, 0.0444]]),[torch.tensor([[0.0068, 0.0235, 0.9628]]), torch.tensor([[0.6133, 0.2772, 0.0444]])] )
        ]
 )
 def test_predict(mocks, inputs, expected):

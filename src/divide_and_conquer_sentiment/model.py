@@ -17,4 +17,5 @@ class DACSModel:
     def predict(self, inputs: list[str], **kwargs):
         return self.aggregator.aggregate(self.subpredictor.predict(inputs), **kwargs)
 
-
+    def classify(self, inputs: list[str], **kwargs):
+        return self.aggregator.classify(self.predict(inputs, **kwargs))
