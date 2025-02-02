@@ -1,6 +1,5 @@
 import pytest
 import torch
-from transformers import pipeline
 
 from divide_and_conquer_sentiment import SentimentModel
 from divide_and_conquer_sentiment.subprediction.sentence import Chunker, ChunkSubpredictor
@@ -10,7 +9,7 @@ from divide_and_conquer_sentiment.subprediction.sentence import Chunker, ChunkSu
 def mocks(mocker):
     mock_chunker = mocker.Mock(spec=Chunker)
     mock_model = mocker.Mock(spec=SentimentModel)
-    #mock_pipeline._postprocess_params = {"top_k": None}
+    # mock_pipeline._postprocess_params = {"top_k": None}
     return mock_chunker, mock_model
 
 
@@ -36,15 +35,20 @@ def test_predict(inputs, mocks, mocker):
     chunker.chunk_list.assert_called_once_with(inputs)
     assert chunk_subpredictor._chunk_to_tensor.call_args_list == list(map(mocker.call, chunk_list_rv))
 
+
 @pytest.mark.parametrize(
     "inputs, expected",
-    [([torch.tensor([[0.1,0.8,0.1]]), torch.tensor([[0.1,0.8,0.1]]) ], torch.tensor([[0.1,0.8,0.1], [0.1,0.8,0.1]])),
-     ([torch.tensor([[0.1,0.8,0.1]])], torch.tensor([[0.1,0.8,0.1]]))
-     ]
+    [
+        (
+            [torch.tensor([[0.1, 0.8, 0.1]]), torch.tensor([[0.1, 0.8, 0.1]])],
+            torch.tensor([[0.1, 0.8, 0.1], [0.1, 0.8, 0.1]]),
+        ),
+        ([torch.tensor([[0.1, 0.8, 0.1]])], torch.tensor([[0.1, 0.8, 0.1]])),
+    ],
 )
 def test__chunk_to_tensor(mocks, inputs, expected):
     chunker, sentiment_model = mocks
     sentiment_model.predict.return_value = inputs
     chunk_subpredictor = ChunkSubpredictor(chunker, sentiment_model)
-    output = chunk_subpredictor._chunk_to_tensor(['it doesnt matter'])
+    output = chunk_subpredictor._chunk_to_tensor(["it doesnt matter"])
     assert torch.equal(output, expected)
