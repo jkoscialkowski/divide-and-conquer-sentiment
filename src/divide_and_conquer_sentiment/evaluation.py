@@ -124,7 +124,10 @@ def _create_plot(plotting_data_dict: dict[str, pd.DataFrame], metric: Metric):
         ax2.set_ylabel(metric)
         ax1.set_xlabel("Tokens")
         ax1.set_title(name)
-        ax2.legend([], [], frameon=False)
+        ax2.get_legend().remove()
         ax1.tick_params("x", labelrotation=45)
+
+    handles, labels = plt.gca().get_legend_handles_labels()
+    fig.legend(handles, labels, loc="upper center")
 
     plt.show()

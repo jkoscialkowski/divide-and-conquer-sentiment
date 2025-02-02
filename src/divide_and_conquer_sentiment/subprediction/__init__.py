@@ -1,5 +1,4 @@
 from .absa import ABSASubpredictor
-from .base import SubpredictorBase
-from .sentence import ChunkSubpredictor
+from .sentence import Chunker, ChunkSubpredictor
 
-__all__ = ["SubpredictorBase", "ChunkSubpredictor", "ABSASubpredictor"]
+__all__ = ["Chunker", "ChunkSubpredictor", "ABSASubpredictor"]

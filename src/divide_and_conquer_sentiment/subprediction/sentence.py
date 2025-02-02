@@ -1,11 +1,12 @@
+from warnings import warn
+
 import claucy
 import pysbd
 import spacy
 import torch
-from transformers import TextClassificationPipeline
 
-from .base import SubpredictorBase
 from .. import SentimentModel
+from .base import SubpredictorBase
 
 
 class ChunkSubpredictor(SubpredictorBase):
@@ -15,13 +16,14 @@ class ChunkSubpredictor(SubpredictorBase):
 
         self.chunker = chunker
         self.sentiment_model = sentiment_model
+        self.dtype = torch.get_default_dtype()
 
     def predict(self, inputs: list[str]) -> list[torch.Tensor]:
         chunked_sentences = self.chunker.chunk_list(inputs)
         return list(map(self._chunk_to_tensor, chunked_sentences))
 
     def _chunk_to_tensor(self, chunk: list[str]) -> torch.Tensor:
-        res = torch.stack(self.sentiment_model.predict(chunk)).squeeze(1)
+        res = torch.stack(self.sentiment_model.predict(chunk)).squeeze(1).to(self.dtype)
         return res
 
 
@@ -46,7 +48,7 @@ class Chunker:
         """
         res = self.segmenter.segment(text)
         if len(res) == 0:
-            print(f'WARNING, For text: {text}, splitting into sentences failed. Returned list with 1 empty string' )
+            warn(f'For text: "{text}", splitting into sentences failed. Returned list with 1 empty string')
             return [""]
         return self.segmenter.segment(text)
 

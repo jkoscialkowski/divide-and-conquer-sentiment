@@ -13,5 +13,7 @@ class FuncAggregator(AggregatorBase):
         """
         self.agg_func = agg_func
 
-    def aggregate(self, subpredictions: list[torch.Tensor], **kwargs) -> list[torch.Tensor]:
+    def aggregate(
+        self, subpredictions: list[torch.Tensor], defaults: list[torch.Tensor] | None = None
+    ) -> list[torch.Tensor]:
         return list(map(self.agg_func, subpredictions))

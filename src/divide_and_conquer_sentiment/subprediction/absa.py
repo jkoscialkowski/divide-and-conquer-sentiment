@@ -7,6 +7,7 @@ from .base import SubpredictorBase
 class ABSASubpredictor(SubpredictorBase):
     def __init__(self, absa_model: AbsaModel):
         self.absa_model = absa_model
+        self.dtype = torch.get_default_dtype()
 
     @classmethod
     def from_pretrained(cls, *args, **kwargs):
@@ -22,16 +23,19 @@ class ABSASubpredictor(SubpredictorBase):
             return aspects_list
 
         inputs_list = list(self.absa_model.polarity_model.prepend_aspects(docs, aspects_list))
-        preds = self.absa_model.polarity_model.predict_proba(inputs_list)
+        preds = self.absa_model.polarity_model.predict_proba(inputs_list, show_progress_bar=False)
         iter_preds = iter(preds)
 
         preds_with_empty = [[next(iter_preds) for _ in aspects] for aspects in aspects_list]
         preds = []
-        dtype = torch.get_default_dtype()
         for input, pred in zip(inputs, preds_with_empty):
             if len(pred) == 0:
-                preds.append(self.absa_model.polarity_model.predict_proba(input).reshape(1, -1).to(dtype))
+                preds.append(
+                    self.absa_model.polarity_model.predict_proba(input, show_progress_bar=False)
+                    .reshape(1, -1)
+                    .to(self.dtype)
+                )
             else:
-                preds.append(torch.vstack(pred).to(dtype))
+                preds.append(torch.vstack(pred).to(self.dtype))
 
         return preds

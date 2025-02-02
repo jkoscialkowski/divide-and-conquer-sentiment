@@ -1,26 +1,27 @@
 import pytest
 import torch
-from divide_and_conquer_sentiment.aggregation import AggregatorBase
+
+from divide_and_conquer_sentiment.aggregation.base import AggregatorBase
 
 
 class TestAggregatorBase(AggregatorBase):
-    def __init__(self):
-        self.nothing = None
-    def aggregate(self, x):
-        return list[torch.Tensor.new_empty()]
+    def aggregate(self, subpredictions: list[torch.Tensor], defaults: list[torch.Tensor] | None = None) -> torch.Tensor:
+        return subpredictions[0]
+
 
 @pytest.mark.parametrize(
     "inputs, expected",
     [
-        ([torch.tensor([0.8,0.1,0.1])],[0]),
-        ([torch.tensor([0.1,0.8,0.1])],[1]),
-        ([torch.tensor([0.1,0.1,0.8])],[2]),
-        ([torch.tensor([0.1,0.1,0.1])],[0]),
-        ([torch.tensor([0.1,0.1,0.8]),torch.tensor([0.1,0.1,0.1])],[2,0]),
-    ]
+        (torch.tensor([[0.8, 0.1, 0.1]]), torch.Tensor([0])),
+        (torch.tensor([[0.1, 0.8, 0.1]]), torch.Tensor([1])),
+        (torch.tensor([[0.1, 0.1, 0.8]]), torch.Tensor([2])),
+        (torch.tensor([[0.1, 0.1, 0.1]]), torch.Tensor([0])),
+        (torch.tensor([[0.1, 0.1, 0.8], [0.1, 0.1, 0.1]]), torch.Tensor([2, 0])),
+    ],
 )
-def test_classify(inputs, expected):
-    base_model = TestAggregatorBase()
-    output = base_model.classify(inputs)
+def test_classify(inputs, expected, mocker):
+    aggregator = TestAggregatorBase()
+    mocker.patch.object(aggregator, "aggregate", return_value=inputs)
+    output = aggregator.classify([torch.Tensor([0])])
 
-    assert output == expected
+    assert torch.equal(output, expected)

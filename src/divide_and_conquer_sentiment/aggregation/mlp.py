@@ -21,7 +21,7 @@ class MLPAggregator(AggregatorBase):
         self.model = mlp
         self.trainer = L.Trainer(callbacks=[EarlyStopping(monitor="val_loss", patience=3, mode="min")])
 
-    def aggregate(self, subpredictions: list[torch.Tensor], **kwargs) -> torch.Tensor:
+    def aggregate(self, subpredictions: list[torch.Tensor], defaults=None) -> torch.Tensor:
         # TODO: Check if the model has been trained
         return self.model.predict(subpredictions)
 
@@ -53,12 +53,9 @@ class MLP(L.LightningModule):
         self.layers = nn.ModuleList([nn.Linear(inp, out) for inp, out in zip(sizes[:-1], sizes[1:])])
         self.lr = lr
 
-    def predict_proba(self, subpredictions: list[torch.Tensor]) -> torch.Tensor:
+    def predict(self, subpredictions: list[torch.Tensor]) -> torch.Tensor:
         with torch.no_grad():
             return F.softmax(self(subpredictions), dim=1)
-
-    def predict(self, subpredictions: list[torch.Tensor]) -> torch.Tensor:
-        return torch.argmax(self.predict_proba(subpredictions), dim=1)
 
     def forward(self, subpredictions: list[torch.Tensor]) -> torch.Tensor:
         x = torch.vstack(list(map(self._feature_func, subpredictions)))
