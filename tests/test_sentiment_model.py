@@ -49,3 +49,22 @@ def test_predict_roberta(mocks, inputs, expected):
     output =sentiment_model.predict(["not important"])
 
     utils.assert_tensor_lists_equal(output, expected)
+
+@pytest.mark.parametrize(
+    "inputs, expected",
+[([[{'label': 'negative', 'score': 0.0005},
+  {'label': 'neutral', 'score': 0.0068},
+  {'label': 'positive', 'score': 0.9926}],
+ [{'label': 'negative', 'score': 0.9991},
+  {'label': 'neutral', 'score': 0.0005},
+  {'label': 'positive', 'score': 0.0002}],
+ [{'label': 'negative', 'score': 0.0004},
+  {'label': 'neutral', 'score': 0.9984},
+  {'label': 'positive', 'score': 0.0011}]], torch.tensor([2, 0, 1]))
+ ])
+def test_classify(mocks,inputs, expected):
+    mock_polarity, mock_roberta = mocks
+    mock_roberta.return_value = inputs
+    sentiment_model = RobertaSentimentModel(mock_roberta)
+    output = sentiment_model.classify(["not important"])
+    torch.equal(output, expected)

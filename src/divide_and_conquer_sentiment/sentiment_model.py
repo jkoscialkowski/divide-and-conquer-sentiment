@@ -19,6 +19,9 @@ class SentimentModel(ABC):
                  prediction for the corresponding subsentence.
         """
         pass
+    def classify(self, subsentences: list[str]) -> torch.Tensor:
+        tensor_list = [torch.argmax(pred, dim=1) for pred in self.predict(subsentences)]
+        return torch.stack(tensor_list).squeeze()
 
 class PolaritySentimentModel(SentimentModel):
 
